@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="VoiceValor helps people see how big tech classifies their social media feed, correct those classifications, and join a community that governs how this data is used." />
+  <title>VoiceValor </title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #092c72;
+      --blue-2: #174ca3;
+      --blue-soft: #edf4ff;
+      --red: #d61f35;
+      --red-soft: #fff0f2;
+      --white: #ffffff;
+      --ink: #092c72;
+      --muted: #446394;
+      --line: rgba(9, 44, 114, 0.18);
+      --shadow: 0 22px 70px rgba(9, 44, 114, 0.14);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, var(--red-soft), transparent 30rem),
+        radial-gradient(circle at 80% 10%, var(--blue-soft), transparent 34rem),
+        var(--white);
+      font-family: "Instrument Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0.15;
+      background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    p, h1, h2, h3, h4, blockquote { margin-top: 0; }
+    button { font: inherit; }
+
+    .page { min-height: 100vh; }
+    .container { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 70px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 2px solid var(--blue);
+      border-radius: 14px;
+      background: var(--blue);
+      color: var(--white);
+      box-shadow: 5px 5px 0 var(--red);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-links a {
+      padding: 9px 12px;
+      border-radius: 999px;
+    }
+
+    .nav-links a:hover { background: var(--blue-soft); color: var(--blue); }
+
+    .hero {
+      padding: 72px 0 64px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
+      gap: 46px;
+      align-items: center;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      padding: 9px 12px;
+      border: 1px solid var(--red);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .kicker-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--red);
+      box-shadow: 0 0 0 5px var(--red-soft);
+    }
+
+    h1 {
+      margin-bottom: 24px;
+      color: var(--blue);
+      font-size: clamp(48px, 7vw, 86px);
+      line-height: 0.96;
+      letter-spacing: -0.07em;
+      font-weight: 800;
+    }
+
+    .serif {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: -0.035em;
+    }
+
+    .lead {
+      max-width: 660px;
+      margin-bottom: 30px;
+      color: var(--muted);
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.55;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 13px 18px;
+      border: 2px solid var(--blue);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 4px 4px 0 var(--blue);
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .button:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .button.primary {
+      border-color: var(--red);
+      background: var(--red);
+      color: var(--white);
+      box-shadow: 4px 4px 0 var(--blue);
+    }
+
+    .mini-note {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      max-width: 560px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .mini-note strong { color: var(--red); }
+
+    .feed-panel {
+      position: relative;
+      padding: 18px;
+      border: 2px solid var(--blue);
+      border-radius: 34px;
+      background: var(--white);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .feed-panel::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px dashed var(--line);
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    .panel-top {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 4px 4px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .panel-top span:last-child { color: var(--red); }
+
+    .feed-layout {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(210px, 0.72fr);
+      gap: 14px;
+    }
+
+    .phone {
+      border: 2px solid var(--blue);
+      border-radius: 28px;
+      background: var(--blue-soft);
+      overflow: hidden;
+    }
+
+    .phone-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--white);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .post {
+      margin: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--white);
+    }
+
+    .post-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--red);
+      box-shadow: inset 0 0 0 6px var(--white);
+      border: 2px solid var(--red);
+    }
+
+    .post p {
+      margin: 0 0 12px;
+      color: var(--blue);
+      font-size: 15px;
+      line-height: 1.42;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 9px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .chip.red { background: var(--red-soft); color: var(--red); }
+
+    .classifier {
+      display: grid;
+      gap: 10px;
+    }
+
+    .classifier-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--white);
+    }
+
+    .classifier-card h3 {
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .classifier-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .wrong-tag {
+      display: inline-flex;
+      margin-top: 10px;
+      padding: 7px 9px;
+      border: 1px solid var(--red);
+      border-radius: 999px;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .correction-ui {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .correction-ui button {
+      cursor: pointer;
+      padding: 9px 10px;
+      border: 1px solid var(--blue);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .correction-ui button.active {
+      background: var(--red);
+      color: var(--white);
+      border-color: var(--red);
+    }
+
+    .sent-back {
+      display: none;
+      margin-top: 10px;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .sent-back.show { display: block; }
+
+    section {
+      padding: 76px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 34px;
+      align-items: end;
+      margin-bottom: 36px;
+    }
+
+    .label {
+      display: inline-flex;
+      width: max-content;
+      max-width: 100%;
+      padding: 8px 11px;
+      border: 1px solid var(--red);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h2 {
+      margin-bottom: 0;
+      color: var(--blue);
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+      font-weight: 800;
+    }
+
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .journey-card {
+      position: relative;
+      min-height: 360px;
+      padding: 24px;
+      border: 2px solid var(--blue);
+      border-radius: var(--radius);
+      background: var(--white);
+      box-shadow: 8px 8px 0 var(--blue-soft);
+      overflow: hidden;
+    }
+
+    .journey-card:nth-child(2) { box-shadow: 8px 8px 0 var(--red-soft); }
+    .journey-card:nth-child(3) { background: var(--blue); color: var(--white); }
+
+    .step-number {
+      display: inline-flex;
+      margin-bottom: 28px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: var(--red);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .journey-card h3 {
+      margin-bottom: 14px;
+      font-size: clamp(25px, 3vw, 34px);
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+    }
+
+    .journey-card p {
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .journey-card:nth-child(3) p { color: rgba(255, 255, 255, 0.78); }
+
+    .mini-visual {
+      margin-top: auto;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--blue-soft);
+      overflow: hidden;
+    }
+
+    .journey-card:nth-child(3) .mini-visual {
+      border-color: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .mini-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .mini-row:last-child { border-bottom: 0; }
+    .journey-card:nth-child(3) .mini-row { border-color: rgba(255, 255, 255, 0.18); }
+    .mini-row b { color: var(--red); }
+    .journey-card:nth-child(3) .mini-row b { color: var(--white); }
+
+    .impact-area {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+      gap: 28px;
+      align-items: center;
+    }
+
+    .impact-copy {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+    }
+
+    .impact-copy p {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .stats-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stat {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 16px;
+      align-items: center;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--white);
+    }
+
+    .stat-value {
+      color: var(--red);
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+    }
+
+    .stat p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .quote-section {
+      padding: 80px 0;
+      background: var(--blue);
+      color: var(--white);
+    }
+
+    .quote-box {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    .quote-box .label {
+      border-color: rgba(255, 255, 255, 0.35);
+      background: transparent;
+      color: var(--white);
+    }
+
+    blockquote {
+      margin-bottom: 20px;
+      font-family: "Instrument Serif", Georgia, serif;
+      font-size: clamp(32px, 5vw, 70px);
+      line-height: 1;
+      letter-spacing: -0.035em;
+    }
+
+    .quote-source {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .closing {
+      padding: 78px 0 90px;
+      text-align: center;
+    }
+
+    .closing h2 {
+      max-width: 900px;
+      margin: 0 auto 22px;
+    }
+
+    .closing p {
+      max-width: 720px;
+      margin: 0 auto 30px;
+      color: var(--muted);
+      font-size: 19px;
+      line-height: 1.55;
+    }
+
+    .reveal { opacity: 0; transform: translateY(20px); }
+
+    @media (max-width: 980px) {
+      .hero-grid, .section-head, .impact-area, .quote-box { grid-template-columns: 1fr; }
+      .hero { padding-top: 48px; }
+      .feed-layout { grid-template-columns: 1fr; }
+      .journey-grid { grid-template-columns: 1fr; }
+      .journey-card { min-height: auto; }
+      .stat { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .container { width: min(100% - 28px, 1160px); }
+      .nav-links { display: none; }
+      .hero { padding: 36px 0 44px; }
+      .button-row { flex-direction: column; }
+      .button { width: 100%; }
+      .feed-panel { padding: 12px; border-radius: 24px; }
+      .feed-panel::before { display: none; }
+      .panel-top { font-size: 11px; }
+      h1 { font-size: clamp(42px, 13vw, 62px); }
+      section { padding: 56px 0; }
+      blockquote { font-size: clamp(31px, 10vw, 48px); }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <nav class="nav">
+      <div class="container nav-inner">
+        <a class="brand" href="#top" aria-label="VoiceValor home">
+          <span class="brand-mark">V</span>
+          <span>VoiceValor</span>
+        </a>
+        <div class="nav-links" aria-label="Page navigation">
+          <a href="#three-parts">How it works</a>
+          <a href="#impact">Impact</a>
+          <a href="#community">Community</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero" id="top">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <p class="kicker"><span class="kicker-dot"></span> Relaunching with new features on 25 May</p>
+          <h1>See what the machine sees. <span class="serif">Then correct it.</span></h1>
+          <p class="lead">
+            VoiceValor shows people how big tech classifies their social media feed, lets them correct what the classifier gets wrong, and invites them into a community that decides how this data should be used.
+          </p>
+          <div class="button-row">
+            <a class="button primary" href="#three-parts">How it works</a>
+            <a class="button" href="#impact">Impact so far</a>
+          </div>
+          <div class="mini-note">
+            <strong>Why it matters</strong>
+            <span>Misogyny, harassment, and context-specific abuse often look invisible to automated systems. VoiceValor makes those gaps visible and correctable.</span>
+          </div>
+        </div>
+
+        <div class="feed-panel reveal" aria-label="Classifier demonstration">
+          <div class="panel-top">
+            <span>Social feed</span>
+            <span>Classifier view</span>
+          </div>
+          <div class="feed-layout">
+            <div class="phone">
+              <div class="phone-header">
+                <span>@your-feed</span>
+                <span>Today</span>
+              </div>
+              <article class="post">
+                <div class="post-user"><span class="avatar"></span><span>Post from your feed</span></div>
+                <p>“This comment was framed as a joke, but it was targeted, gendered, and meant to make me leave the conversation.”</p>
+                <div class="chips">
+                  <span class="chip">public reply</span>
+                  <span class="chip red">possible harm</span>
+                </div>
+              </article>
+              <article class="post">
+                <div class="post-user"><span class="avatar"></span><span>Another post</span></div>
+                <p>“The platform called it low severity. People in my community knew exactly what it meant.”</p>
+                <div class="chips">
+                  <span class="chip">coded language</span>
+                  <span class="chip red">context missing</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="classifier">
+              <div class="classifier-card">
+                <h3>Big tech classification</h3>
+                <p>The model marks the post as low-risk because it misses local context.</p>
+                <span class="wrong-tag">Low severity</span>
+              </div>
+              <div class="classifier-card">
+                <h3>Your correction</h3>
+                <p>Choose what the system should have seen.</p>
+                <div class="correction-ui">
+                  <button type="button">Gendered harassment</button>
+                  <button type="button">Coded threat</button>
+                  <button type="button">Coordinated abuse</button>
+                </div>
+                <p class="sent-back">Correction sent back to the classifier.</p>
+              </div>
+              <div class="classifier-card">
+                <h3>Community layer</h3>
+                <p>You can join others to decide who gets access to the corrected data and what support is needed.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="three-parts">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="label">How it works</p>
+          <h2>VoiceValor makes systematic change possible</h2>
+        </div>
+
+        <div class="journey-grid">
+          <article class="journey-card reveal">
+            <span class="step-number">01</span>
+            <h3>See the feed through big tech’s eyes</h3>
+            <p>People can view their social media feed as a classifier sees it: the labels, risk scores, categories, and blind spots that shape whether harm is noticed or ignored.</p>
+            <div class="mini-visual" aria-hidden="true">
+              <div class="mini-row"><span>Post</span><b>classified</b></div>
+              <div class="mini-row"><span>Context</span><b>missing</b></div>
+              <div class="mini-row"><span>Severity</span><b>under-read</b></div>
+            </div>
+          </article>
+
+          <article class="journey-card reveal">
+            <span class="step-number">02</span>
+            <h3>Correct what the classifier gets wrong</h3>
+            <p>When a label is wrong, incomplete, or too shallow, people can correct it. Those corrections become feedback that can be sent back to improve the classifier.</p>
+            <div class="mini-visual" aria-hidden="true">
+              <div class="mini-row"><span>Wrong label</span><b>changed</b></div>
+              <div class="mini-row"><span>Local meaning</span><b>added</b></div>
+              <div class="mini-row"><span>Classifier</span><b>updated</b></div>
+            </div>
+          </article>
+
+          <article class="journey-card reveal" id="community">
+            <span class="step-number">03</span>
+            <h3>Join a community that governs the data</h3>
+            <p>People can become part of a community that decides who should get access to the data, under what conditions, and how contributors can be supported too.</p>
+            <div class="mini-visual" aria-hidden="true">
+              <div class="mini-row"><span>Access</span><b>decided together</b></div>
+              <div class="mini-row"><span>Use</span><b>reviewed</b></div>
+              <div class="mini-row"><span>Support</span><b>shared</b></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="impact">
+      <div class="container impact-area">
+        <div class="impact-copy reveal">
+          <p class="label">Impact so far</p>
+          <h2>What changes when people can correct the system.</h2>
+          <p>
+            It is possible: people closest to online harm can reveal what automated moderation misses, especially when abuse depends on language, culture, gender, caste, religion, conflict, or political context.
+          </p>
+        </div>
+
+        <div class="stats-list reveal">
+          <div class="stat">
+            <div class="stat-value count" data-target="10000">0</div>
+            <p>survivors and marginalized internet users contributed lived evidence.</p>
+          </div>
+          <div class="stat">
+            <div class="stat-value count" data-target="5500">0</div>
+            <p>platform detection failures identified in culturally specific online misogyny.</p>
+          </div>
+          <div class="stat">
+            <div class="stat-value count" data-target="500000">0</div>
+            <p>data donations gathered through survivor-led, consent-based participation.</p>
+          </div>
+          <div class="stat">
+            <div class="stat-value count" data-target="10000000">0</div>
+            <p>women and girls in South Asia reached through safer digital experiences.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="quote-section">
+      <div class="container quote-box reveal">
+        <p class="label">From lived harm to evidence</p>
+        <div>
+          <blockquote>“VoiceValor has been one of the few spaces where we can talk about conflict, about hate, about violence, and more importantly, do something about it.”</blockquote>
+          <p class="quote-source">Shared by a survivor from Sri Lanka who contributed to VoiceValor’s evidence-building work.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div class="container reveal">
+        <h2>Safer platforms begin with the people they failed first.</h2>
+        <p>VoiceValor is part of Dignity in Difference’s broader work on digital safety, feminist technology, and platform accountability across South Asia.</p>
+        <a class="button primary" href="https://www.dignityindifference.org/">Visit Dignity in Difference</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray('.reveal').forEach(function (item) {
+      gsap.to(item, {
+        opacity: 1,
+        y: 0,
+        duration: 0.75,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 88%',
+          once: true
+        }
+      });
+    });
+
+    gsap.from('.feed-panel', {
+      y: 20,
+      rotate: -1,
+      duration: 0.9,
+      ease: 'power3.out',
+      delay: 0.15
+    });
+
+    var correctionButtons = document.querySelectorAll('.correction-ui button');
+    var sentBack = document.querySelector('.sent-back');
+    correctionButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        correctionButtons.forEach(function (other) { other.classList.remove('active'); });
+        button.classList.add('active');
+        sentBack.classList.add('show');
+        gsap.fromTo(sentBack, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35 });
+      });
+    });
+
+    gsap.utils.toArray('.count').forEach(function (el) {
+      var target = Number(el.dataset.target);
+      var obj = { value: 0 };
+      function format(value) {
+        if (target >= 10000000) return Math.floor(value / 1000000) + 'M+';
+        return Math.floor(value).toLocaleString() + '+';
+      }
+      gsap.to(obj, {
+        value: target,
+        duration: 1.6,
+        ease: 'power2.out',
+        onUpdate: function () { el.innerText = format(obj.value); },
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 86%',
+          once: true
+        }
+      });
+    });
+  </script>
+</body>
+</html>
